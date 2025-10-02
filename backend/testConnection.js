@@ -2,7 +2,7 @@ const sql = require('mssql/msnodesqlv8');
 
 const config = {
   connectionString:
-    'server=DESKTOP-KO3IBIE\\SQLEXPRESS01;Database=ElektronskaBiblioteka;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}'
+    'server=DESKTOP-KO3IBIE\\SQLEXPRESS01;Database=eLibery;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}'
 };
 
 async function test() {
