@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const sql = require('mssql/msnodesqlv8');
+const mysql = require('mysql2/promise'); // ✅ koristi mysql2 s Promise API-jem
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -9,34 +9,52 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+// 🔑 MySQL konekcija
 const dbConfig = {
-  connectionString:
-    'server=DESKTOP-KO3IBIE\\SQLEXPRESS01;Database=eLibery;Trusted_Connection=Yes;Driver={SQL Server Native Client 11.0}'
+  host: 'localhost',
+  user: 'root',
+  password: '11skolaskola',
+  database: 'eLibery'
 };
 
-// TEST ruta
-app.get('/', (req, res) => res.send('Backend radi!'));
+// 🧪 TEST ruta
+app.get('/', (req, res) => res.send('✅ Backend radi s MySQL bazom eLibery!'));
 
-// LOGIN ruta
+// 🔐 LOGIN ruta
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ message: 'Email i lozinka su obavezni' });
 
+  if (!email || !password)
+    return res.status(400).json({ message: 'Email i lozinka su obavezni' });
+
+  let connection;
   try {
-    const pool = await sql.connect(dbConfig);
-    const result = await pool.request()
-      .input('Email', sql.NVarChar, email)
-      .query('SELECT * FROM Users WHERE Email = @Email');
+    // Povezivanje na MySQL
+    connection = await mysql.createConnection(dbConfig);
 
-    if (result.recordset.length === 0) return res.status(401).json({ message: 'Nepostojeći korisnik' });
+    // Dohvati korisnika prema emailu
+    const [rows] = await connection.execute(
+      'SELECT * FROM Users WHERE Email = ?',
+      [email]
+    );
 
-    const user = result.recordset[0];
+    if (rows.length === 0)
+      return res.status(401).json({ message: 'Nepostojeći korisnik' });
+
+    const user = rows[0];
+
+    // Provjera lozinke
     const isMatch = await bcrypt.compare(password, user.PasswordHash);
     if (!isMatch) return res.status(401).json({ message: 'Pogrešna lozinka' });
 
-    // Generišemo JWT token
-    const token = jwt.sign({ id: user.Id, role: user.Role }, 'tajni-kljuc', { expiresIn: '1h' });
+    // Generisanje JWT tokena
+    const token = jwt.sign(
+      { id: user.Id, role: user.Role },
+      'tajni-kljuc', // preporuka: koristi .env
+      { expiresIn: '1h' }
+    );
 
+    // Odgovor frontendu
     res.json({
       user: {
         id: user.Id,
@@ -49,12 +67,14 @@ app.post('/api/login', async (req, res) => {
       token
     });
 
-    await sql.close();
+    await connection.end();
   } catch (err) {
     console.error('❌ Greška:', err);
     res.status(500).json({ message: 'Greška na serveru' });
+    if (connection) await connection.end();
   }
 });
 
+// 🚀 Pokretanje servera
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Server pokrenut na portu ${PORT}`));
+app.listen(PORT, () => console.log(`✅ Server pokrenut na portu ${PORT}`));
