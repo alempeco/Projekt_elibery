@@ -1,0 +1,19 @@
+<div class="dashboard-container">
+  <aside class="sidebar">
+    <h2>eLibery Dashboard</h2>
+    <nav>
+      <ul>
+        <li><a routerLink="/dashboard">Home</a></li>
+        <li><a href="#">Knjige</a></li>
+        <li><a href="#">Autori</a></li>
+        <li><a href="#">Korisnici</a></li>
+        <li><a href="#" (click)="logout()">Logout</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <h1>Dobrodošli, {{ userName }}!</h1>
+    <p>Ovo je tvoj početni Dashboard za eLibery aplikaciju.</p>
+  </main>
+</div>

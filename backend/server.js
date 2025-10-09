@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const mysql = require('mysql2/promise'); // ✅ koristi mysql2 s Promise API-jem
+const mysql = require('mysql2/promise'); 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -44,8 +44,9 @@ app.post('/api/login', async (req, res) => {
     const user = rows[0];
 
     // Provjera lozinke
-    const isMatch = await bcrypt.compare(password, user.PasswordHash);
-    if (!isMatch) return res.status(401).json({ message: 'Pogrešna lozinka' });
+     const isMatch = await bcrypt.compare(password, user.PasswordHash);
+     if (!isMatch) return res.status(401).json({ message: 'Pogrešna lozinka' });
+
 
     // Generisanje JWT tokena
     const token = jwt.sign(
