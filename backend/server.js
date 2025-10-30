@@ -76,6 +76,24 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// 📚 GET - Sve kategorije
+app.get('/api/categories', async (req, res) => {
+  let connection;
+  try {
+    connection = await mysql.createConnection(dbConfig);
+
+    const [rows] = await connection.execute('SELECT * FROM Categories');
+    res.json(rows);
+
+    await connection.end();
+  } catch (err) {
+    console.error('❌ Greška prilikom dohvaćanja kategorija:', err);
+    res.status(500).json({ message: 'Greška na serveru prilikom dohvaćanja kategorija' });
+    if (connection) await connection.end();
+  }
+});
+
+
 // 🚀 Pokretanje servera
 const PORT = 3000;
 app.listen(PORT, () => console.log(`✅ Server pokrenut na portu ${PORT}`));

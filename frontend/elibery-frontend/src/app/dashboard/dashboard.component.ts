@@ -18,4 +18,8 @@ export class DashboardComponent {
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
+  navigatetoCategories()
+  {
+    this.router.navigate(['/categories']);
+  }
 }
