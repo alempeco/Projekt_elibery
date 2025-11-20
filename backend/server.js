@@ -77,5 +77,43 @@ app.post('/api/login', async (req, res) => {
 });
 
 // 🚀 Pokretanje servera
+// 🔐 REGISTER ruta - kreira novog korisnika sa hashiranom lozinkom
+app.post('/api/register', async (req, res) => {
+  const { firstName, lastName, email, password, role = 'student', class: userClass = null } = req.body;
+
+  if (!firstName || !lastName || !email || !password)
+    return res.status(400).json({ message: 'firstName, lastName, email i password su obavezni' });
+
+  let connection;
+  try {
+    // Hash lozinke
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
+    connection = await mysql.createConnection(dbConfig);
+
+    // Ubaci korisnika
+    const [result] = await connection.execute(
+      `INSERT INTO Users (FirstName, LastName, Email, PasswordHash, Role, Class) VALUES (?, ?, ?, ?, ?, ?)`,
+      [firstName, lastName, email, passwordHash, role, userClass]
+    );
+
+    // Dohvati upravo kreiranog korisnika (bez lozinke)
+    const [rows] = await connection.execute('SELECT Id, FirstName, LastName, Email, Role, Class FROM Users WHERE Id = ?', [result.insertId]);
+    const createdUser = rows[0];
+
+    res.status(201).json({ user: createdUser });
+    await connection.end();
+  } catch (err) {
+    console.error('❌ Greška pri registraciji:', err);
+    // Simple duplicate email handling (MySQL error code 1062)
+    if (err && err.errno === 1062) {
+      return res.status(409).json({ message: 'Email već postoji' });
+    }
+    res.status(500).json({ message: 'Greška na serveru pri registraciji' });
+    if (connection) await connection.end();
+  }
+});
+
 const PORT = 3000;
 app.listen(PORT, () => console.log(`✅ Server pokrenut na portu ${PORT}`));
