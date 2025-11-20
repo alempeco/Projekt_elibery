@@ -1,0 +1,53 @@
+/* Dodatni fini detalji koji nisu u Tailwindu */
+table {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb; /* light gray border */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+thead th {
+  letter-spacing: 0.05em;
+  background-color: #2563eb; /* Tailwind blue-600 */
+  color: white;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+tbody tr {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+td,
+th {
+  transition: all 0.2s ease-in-out;
+  padding: 1rem;
+  text-align: left;
+}
+
+tr:hover td {
+  transform: scale(1.01);
+  background-color: #eff6ff; /* Tailwind blue-50 */
+  cursor: pointer;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9fafb; /* Tailwind gray-50 */
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  table {
+    font-size: 0.875rem;
+  }
+
+  td,
+  th {
+    padding: 0.75rem;
+  }
+}
