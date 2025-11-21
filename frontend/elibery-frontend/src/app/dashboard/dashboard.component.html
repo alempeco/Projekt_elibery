@@ -1,16 +1,17 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <div class="dashboard-container">
   <aside class="sidebar">
     <h2>eLibery Dashboard</h2>
     <nav>
       <ul>
-        <li><a routerLink="/dashboard">Home</a></li>
-        <li><a href="#">Knjige</a></li>
-        <li><a href="#">Autori</a></li>
-        <li><a href="#">Korisnici</a></li>
-        <li><a href="#" (click)="logout()">Logout</a></li>
-        <li><a href="categories" (click)="navigatetoCategories()">Logout</a></li>
-
-      </ul>
+  <li><a routerLink="/dashboard"><i class="fa-solid fa-house"></i> Home</a></li>
+  <li><a routerLink="/books"><i class="fa-solid fa-book"></i> Knjige</a></li>
+  <li><a routerLink="/authors"><i class="fa-solid fa-user-pen"></i> Autori</a></li>
+  <li><a routerLink="/users"><i class="fa-solid fa-users"></i> Korisnici</a></li>
+  <li><a (click)="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
+  <li><a (click)="navigatetoCategories()"><i class="fa-solid fa-tags"></i> Kategorije</a></li>
+</ul>
     </nav>
   </aside>
 
@@ -19,3 +20,7 @@
     <p>Ovo je tvoj početni Dashboard za eLibery aplikaciju.</p>
   </main>
 </div>
+
+
+
+
