@@ -92,6 +92,22 @@ app.get('/api/categories', async (req, res) => {
     if (connection) await connection.end();
   }
 });
+// 📚 GET - Sve kategorije
+app.get('/api/books', async (req, res) => {
+  let connection;
+  try {
+    connection = await mysql.createConnection(dbConfig);
+
+    const [rows] = await connection.execute('SELECT * FROM books');
+    res.json(rows);
+
+    await connection.end();
+  } catch (err) {
+    console.error('❌ Greška prilikom dohvaćanja kategorija:', err);
+    res.status(500).json({ message: 'Greška na serveru prilikom dohvaćanja kategorija' });
+    if (connection) await connection.end();
+  }
+});
 
 
 // 🚀 Pokretanje servera

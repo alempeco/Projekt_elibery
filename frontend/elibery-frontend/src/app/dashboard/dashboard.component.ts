@@ -22,4 +22,8 @@ export class DashboardComponent {
   {
     this.router.navigate(['/categories']);
   }
+   navigatetoBooks()
+  {
+    this.router.navigate(['/books']);
+  }
 }

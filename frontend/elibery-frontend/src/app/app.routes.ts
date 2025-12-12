@@ -4,6 +4,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthGuard } from './guards/auth.guard';
 import { RegisterComponent } from './register/register.component';
 import { CategoriesComponent } from './categories/categories.component';
+import { BooksComponent } from './books/books.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -11,6 +12,8 @@ export const routes: Routes = [
 
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'categories', component: CategoriesComponent, canActivate: [AuthGuard] },
+  { path: 'books', component: BooksComponent, canActivate: [AuthGuard] },
+
 
   { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];

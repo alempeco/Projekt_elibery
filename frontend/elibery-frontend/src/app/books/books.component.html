@@ -1,0 +1,64 @@
+<div class="p-6 max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-6">
+    <h2 class="text-3xl font-bold text-blue-700 flex items-center gap-2">
+      📘 Knjige
+    </h2>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="flex justify-center items-center h-32">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600"></div>
+  </div>
+
+  <!-- Greška -->
+  <div *ngIf="error" class="text-red-700 bg-red-100 p-4 rounded-lg shadow-sm mb-4">
+    {{ error }}
+  </div>
+
+  <!-- Tabela knjiga -->
+  <div *ngIf="!loading && books.length" class="overflow-x-auto bg-white rounded-2xl shadow-lg">
+    <table class="min-w-full border-collapse text-sm">
+      <thead class="bg-blue-600 text-white">
+        <tr>
+          <th class="p-3 text-left">ID</th>
+          <th class="p-3 text-left">Naslov</th>
+          <th class="p-3 text-left">Autor</th>
+          <th class="p-3 text-left">Godina</th>
+          <th class="p-3 text-left">ISBN</th>
+          <th class="p-3 text-left">Kategorija</th>
+          <th class="p-3 text-left">Slika</th>
+          <th class="p-3 text-left">Opis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let book of books; let i = index"
+          [ngClass]="i % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
+          class="hover:bg-blue-50 transition-colors"
+        >
+          <td class="p-3 border-b text-gray-700 font-medium">{{ book.Id }}</td>
+          <td class="p-3 border-b font-semibold text-gray-800">{{ book.Title }}</td>
+          <td class="p-3 border-b text-gray-700">{{ book.Author }}</td>
+          <td class="p-3 border-b">{{ book.PublishedYear }}</td>
+          <td class="p-3 border-b">{{ book.ISBN }}</td>
+          <td class="p-3 border-b">{{ book.CategoryId }}</td>
+          <td class="p-3 border-b flex justify-center items-center">
+            <img
+              *ngIf="book.ImageUrl"
+              [src]="book.ImageUrl"
+              alt="Slika"
+              class="book-image"
+            />
+          </td>
+          <td class="p-3 border-b text-gray-600 max-w-sm truncate">{{ book.Description }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Poruka kada nema knjiga -->
+  <div *ngIf="!loading && !books.length" class="text-center text-gray-500 mt-6">
+    📭 Trenutno nema dostupnih knjiga.
+  </div>
+</div>
