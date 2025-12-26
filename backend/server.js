@@ -109,6 +109,24 @@ app.get('/api/books', async (req, res) => {
   }
 });
 
+// 📚 GET - Sve kategorije
+app.get('/api/users', async (req, res) => {
+  let connection;
+  try {
+    connection = await mysql.createConnection(dbConfig);
+
+    const [rows] = await connection.execute('SELECT * FROM users');
+    res.json(rows);
+
+    await connection.end();
+  } catch (err) {
+    console.error('❌ Greška prilikom dohvaćanja kategorija:', err);
+    res.status(500).json({ message: 'Greška na serveru prilikom dohvaćanja kategorija' });
+    if (connection) await connection.end();
+  }
+});
+
+
 
 // 🚀 Pokretanje servera
 // 🔐 REGISTER ruta - kreira novog korisnika sa hashiranom lozinkom

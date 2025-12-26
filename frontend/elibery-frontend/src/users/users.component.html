@@ -1,0 +1,62 @@
+<div class="users-wrapper p-6 max-w-6xl mx-auto">
+  <!-- Header -->
+  <div class="header mb-6">
+    <h2 class="title">
+      👤 Korisnici
+    </h2>
+  </div>
+
+  <!-- Loader -->
+  <div *ngIf="loading" class="loader-wrapper">
+    <div class="loader"></div>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="error-box">
+    {{ error }}
+  </div>
+
+  <!-- Users Table -->
+  <div *ngIf="!loading && users.length" class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Ime</th>
+          <th>Prezime</th>
+          <th>Email</th>
+          <th>Uloga</th>
+          <th>Razred</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr
+          *ngFor="let user of users; let i = index"
+          [class.row-even]="i % 2 === 0"
+          [class.row-odd]="i % 2 !== 0"
+        >
+          <td>{{ user.Id }}</td>
+          <td class="name">{{ user.FirstName }}</td>
+          <td class="name">{{ user.LastName }}</td>
+          <td class="email">{{ user.Email }}</td>
+          <td>
+            <span
+              class="role-badge"
+              [class.admin]="user.Role === 'Admin'"
+              [class.student]="user.Role !== 'Admin'"
+            >
+              {{ user.Role }}
+            </span>
+          </td>
+          <td class="class-cell">{{ user.Class }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && !users.length" class="empty">
+    📭 Trenutno nema korisnika.
+  </div>
+</div>

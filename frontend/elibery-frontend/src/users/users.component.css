@@ -1,0 +1,213 @@
+/* ===============================
+   BASIC LAYOUT (zamjena za Tailwind)
+================================ */
+.p-6 {
+  padding: 24px;
+}
+
+.max-w-6xl {
+  max-width: 72rem;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.mb-6 {
+  margin-bottom: 24px;
+}
+
+/* ===============================
+   PAGE
+================================ */
+:host {
+  display: block;
+  background-color: #f4f7fb;
+  min-height: 100vh;
+}
+
+.users-wrapper {
+  animation: fadeIn 0.3s ease-in;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #15803d;
+}
+
+/* ===============================
+   LOADER
+================================ */
+.loader-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 8rem;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #d1fae5;
+  border-top-color: #16a34a;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* ===============================
+   ERROR
+================================ */
+.error-box {
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* ===============================
+   TABLE CONTAINER
+================================ */
+.table-container {
+  background: #ffffff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+/* ===============================
+   TABLE
+================================ */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+thead {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+}
+
+thead th {
+  padding: 16px;
+  text-align: left;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ===============================
+   ROWS
+================================ */
+tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.row-even {
+  background-color: #f9fafb;
+}
+
+.row-odd {
+  background-color: #ffffff;
+}
+
+tbody tr:hover {
+  background-color: #f0fdf4;
+}
+
+/* ===============================
+   CELLS
+================================ */
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+  white-space: nowrap;
+}
+
+td:first-child {
+  font-weight: 700;
+  color: #111827;
+}
+
+.name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.email {
+  font-family: monospace;
+  font-size: 13px;
+}
+
+.class-cell {
+  font-weight: 600;
+  color: #065f46;
+}
+
+/* ===============================
+   ROLE BADGE
+================================ */
+.role-badge {
+  display: inline-block;
+  min-width: 80px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 9999px;
+}
+
+.role-badge.admin {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.role-badge.student {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+/* ===============================
+   EMPTY
+================================ */
+.empty {
+  margin-top: 40px;
+  text-align: center;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+/* ===============================
+   ANIMATIONS
+================================ */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

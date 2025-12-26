@@ -26,4 +26,8 @@ export class DashboardComponent {
   {
     this.router.navigate(['/books']);
   }
+  navigatetoUsers()
+  {
+    this.router.navigate(['/users']);
+  }
 }
