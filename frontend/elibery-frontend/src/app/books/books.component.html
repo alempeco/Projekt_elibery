@@ -1,6 +1,12 @@
 <app-header [title]="'Knjige'"></app-header>
 
 <div class="page-container">
+  
+  <app-search 
+    [placeholderText]="'Pretraži naslov, autora ili opis...'" 
+    (searchChange)="handleSearch($event)">
+  </app-search>
+
   <div *ngIf="loading" class="loader-wrapper">
     <div class="loader"></div>
   </div>
@@ -9,7 +15,7 @@
     {{ error }}
   </div>
 
-  <div *ngIf="!loading && books.length" class="table-card">
+  <div *ngIf="!loading && filteredBooks.length" class="table-card">
     <div class="table-responsive">
       <table>
         <thead>
@@ -24,7 +30,7 @@
         </thead>
         <tbody>
           <tr
-            *ngFor="let book of books; let i = index"
+            *ngFor="let book of filteredBooks; let i = index"
             [class.row-even]="i % 2 === 0"
             [class.row-odd]="i % 2 !== 0"
           >
@@ -45,9 +51,7 @@
               />
             </td>
             <td class="description-cell">
-              
-                {{ book.Description }}
-              
+              {{ book.Description }}
             </td>
           </tr>
         </tbody>
@@ -55,7 +59,7 @@
     </div>
   </div>
 
-  <div *ngIf="!loading && !books.length" class="empty-state">
-    📭 Trenutno nema dostupnih knjiga u bazi.
+  <div *ngIf="!loading && !filteredBooks.length" class="empty-state">
+    📭 Nema knjiga koje odgovaraju vašoj pretrazi.
   </div>
 </div>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
+import { SearchComponent } from '../search/search.component';
 
 interface Book {
   Id: number;
@@ -21,10 +22,11 @@ interface Book {
   templateUrl: './books.component.html',
   styleUrls: ['./books.component.css'],
   standalone: true,
-  imports: [CommonModule,HeaderComponent   ]
+  imports: [CommonModule, HeaderComponent, SearchComponent]
 })
 export class BooksComponent implements OnInit {
-  books: Book[] = [];
+  books: Book[] = [];          // Originalni podaci iz baze
+  filteredBooks: Book[] = [];   // Podaci koji se zapravo prikazuju (filtrirani)
   loading = true;
   error = '';
 
@@ -36,6 +38,7 @@ export class BooksComponent implements OnInit {
     this.http.get<Book[]>(this.apiUrl).subscribe({
       next: (data) => {
         this.books = data;
+        this.filteredBooks = data; // Na početku su isti
         this.loading = false;
       },
       error: (err) => {
@@ -44,5 +47,20 @@ export class BooksComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  // Metoda koja prima tekst iz Search komponente
+  handleSearch(text: string) {
+    if (!text) {
+      this.filteredBooks = this.books;
+      return;
+    }
+
+    const search = text.toLowerCase();
+    this.filteredBooks = this.books.filter(book => 
+      book.Title.toLowerCase().includes(search) || 
+      book.Author.toLowerCase().includes(search) ||
+      book.Description?.toLowerCase().includes(search)
+    );
   }
 }
