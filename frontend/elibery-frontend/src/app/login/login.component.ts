@@ -28,7 +28,8 @@ export class LoginComponent {
         localStorage.setItem('user', JSON.stringify(res.user));
 
         // Preusmjeri na home (ili dashboard)
-        this.router.navigate(['/dashboard']);
+          this.router.navigate(['/books']);
+
 
       },
       error: (err) => {

@@ -2,25 +2,42 @@
 
 <div class="dashboard-container">
   <aside class="sidebar">
-    <h2>eLibery Dashboard</h2>
+    <h2 class="logo">eLibery</h2>
+
     <nav>
       <ul>
-  <li><a routerLink="/dashboard"><i class="fa-solid fa-house"></i> Home</a></li>
-  <li><a (click)="navigatetoBooks()" routerLink="/books"><i class="fa-solid fa-book"></i> Knjige</a></li>
-  <li><a routerLink="/authors"><i class="fa-solid fa-user-pen"></i> Autori</a></li>
-  <li><a (click)="navigatetoUsers()"><i class="fa-solid fa-users"></i> Korisnici</a></li>
-  <li><a (click)="logout()"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
-  <li><a (click)="navigatetoCategories()"><i class="fa-solid fa-tags"></i> Kategorije</a></li>
-</ul>
+        <li>
+          <a routerLink="/books" routerLinkActive="active">
+            <i class="fa-solid fa-book"></i>
+            <span>Knjige</span>
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/users" routerLinkActive="active">
+            <i class="fa-solid fa-users"></i>
+            <span>Korisnici</span>
+          </a>
+        </li>
+
+        <li>
+          <a routerLink="/categories" routerLinkActive="active">
+            <i class="fa-solid fa-tags"></i>
+            <span>Kategorije</span>
+          </a>
+        </li>
+
+        <li class="logout-item">
+          <a (click)="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Logout</span>
+          </a>
+        </li>
+      </ul>
     </nav>
   </aside>
 
   <main class="main-content">
-    <h1>Dobrodošli, {{ userName }}!</h1>
-    <p>Ovo je tvoj početni Dashboard za eLibery aplikaciju.</p>
+    <router-outlet></router-outlet>
   </main>
 </div>
-
-
-
-

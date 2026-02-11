@@ -8,15 +8,22 @@ import { BooksComponent } from './books/books.component';
 import { UsersComponent } from '../users/users.component';
 
 export const routes: Routes = [
+
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
-  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
-  { path: 'categories', component: CategoriesComponent, canActivate: [AuthGuard] },
-  { path: 'books', component: BooksComponent, canActivate: [AuthGuard] },
-  { path: 'users', component: UsersComponent, canActivate: [AuthGuard] },
+  {
+    path: '',
+    component: DashboardComponent,
+    canActivate: [AuthGuard],
+    children: [
+      { path: 'books', component: BooksComponent },
+      { path: 'categories', component: CategoriesComponent },
+      { path: 'users', component: UsersComponent },
+      { path: '', redirectTo: 'books', pathMatch: 'full' }
+    ]
+  },
 
+  { path: '**', redirectTo: 'login' }
 
-
-  { path: '', redirectTo: '/login', pathMatch: 'full' }
 ];
