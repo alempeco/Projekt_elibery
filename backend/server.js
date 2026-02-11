@@ -98,16 +98,32 @@ app.get('/api/books', async (req, res) => {
   try {
     connection = await mysql.createConnection(dbConfig);
 
-    const [rows] = await connection.execute('SELECT * FROM books');
-    res.json(rows);
+    const [rows] = await connection.execute(`
+      SELECT 
+        b.Id,
+        b.ISBN,
+        b.Title,
+        b.Author,
+        b.PublishedYear,
+        b.TotalCopies,
+        b.AvailableCopies,
+        b.ImageUrl,
+        b.Description,
+        c.Name AS CategoryName
+      FROM books b
+      JOIN categories c ON b.CategoryId = c.Id
+    `);
 
+    res.json(rows);
     await connection.end();
+
   } catch (err) {
-    console.error('❌ Greška prilikom dohvaćanja kategorija:', err);
-    res.status(500).json({ message: 'Greška na serveru prilikom dohvaćanja kategorija' });
+    console.error('❌ Greška prilikom dohvaćanja knjiga:', err);
+    res.status(500).json({ message: 'Greška na serveru' });
     if (connection) await connection.end();
   }
 });
+
 
 // 📚 GET - Sve kategorije
 app.get('/api/users', async (req, res) => {

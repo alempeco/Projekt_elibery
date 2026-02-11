@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { HeaderComponent } from '../app/header/header.component';
+
 
 interface User {
   Id: number;
@@ -15,9 +17,10 @@ interface User {
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule],
+  // 🔥 DODAN HeaderComponent U IMPORTE
+  imports: [CommonModule, HeaderComponent], 
   templateUrl: './users.component.html',
-  styleUrls: ['./users.component.css']   // 🔥 OVO TI JE FALILO
+  styleUrls: ['./users.component.css']
 })
 export class UsersComponent implements OnInit {
   users: User[] = [];

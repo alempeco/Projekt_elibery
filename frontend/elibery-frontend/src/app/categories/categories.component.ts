@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { HeaderComponent } from '../header/header.component';
 
 interface Category {
   Id: number;
@@ -13,7 +14,7 @@ interface Category {
   templateUrl: './categories.component.html',
   styleUrls: ['./categories.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule,HeaderComponent]
 })
 export class CategoriesComponent implements OnInit {
   categories: Category[] = [];

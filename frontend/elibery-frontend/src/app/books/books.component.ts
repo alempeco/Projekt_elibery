@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { HeaderComponent } from '../header/header.component';
 
 interface Book {
   Id: number;
@@ -10,7 +11,7 @@ interface Book {
   PublishedYear: number;
   TotalCopies: number;
   AvailableCopies: number;
-  CategoryId: number;
+  CategoryName: string; 
   ImageUrl: string;
   Description: string;
 }
@@ -20,7 +21,7 @@ interface Book {
   templateUrl: './books.component.html',
   styleUrls: ['./books.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule,HeaderComponent   ]
 })
 export class BooksComponent implements OnInit {
   books: Book[] = [];

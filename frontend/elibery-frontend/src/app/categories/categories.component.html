@@ -1,49 +1,45 @@
-<div class="p-6 max-w-5xl mx-auto">
-  <div class="flex items-center justify-between mb-6">
-    <h2 class="text-3xl font-semibold text-blue-700 flex items-center gap-2">
-      📚 Kategorije
-    </h2>
-    
+<app-header [title]="'Kategorije'"></app-header>
+
+<div class="page-container">
+  <div *ngIf="loading" class="loader-wrapper">
+    <div class="loader"></div>
   </div>
 
-  <!-- Loader -->
-  <div *ngIf="loading" class="flex justify-center items-center h-32">
-    <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600"></div>
-  </div>
-
-  <!-- Greška -->
-  <div *ngIf="error" class="text-red-600 bg-red-100 p-3 rounded-lg mb-4 shadow-sm">
+  <div *ngIf="error" class="error-box">
     {{ error }}
   </div>
 
-  <!-- Tabela -->
-  <div *ngIf="!loading && categories.length" class="overflow-x-auto bg-white rounded-2xl shadow-md">
-    <table class="min-w-full border-collapse">
-      <thead class="bg-blue-600 text-white">
-        <tr>
-          <th class="p-3 text-left font-medium uppercase tracking-wider">ID</th>
-          <th class="p-3 text-left font-medium uppercase tracking-wider">Naziv</th>
-          <th class="p-3 text-left font-medium uppercase tracking-wider">Opis</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          *ngFor="let cat of categories; let i = index"
-          [ngClass]="i % 2 === 0 ? 'bg-gray-50' : 'bg-white'"
-          class="hover:bg-blue-50 transition-colors"
-        >
-          <td class="p-3 border-b border-gray-200 text-gray-700">{{ cat.Id }}</td>
-          <td class="p-3 border-b border-gray-200 font-semibold text-gray-800">
-            {{ cat.Name }}
-          </td>
-          <td class="p-3 border-b border-gray-200 text-gray-600">{{ cat.Description }}</td>
-        </tr>
-      </tbody>
-    </table>
+  <div *ngIf="!loading && categories.length" class="table-card">
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th class="id-col">ID</th>
+            <th>Naziv Kategorije</th>
+            <th>Opis</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let cat of categories; let i = index"
+            [class.row-even]="i % 2 === 0"
+            [class.row-odd]="i % 2 !== 0"
+          >
+            <td class="id-cell">{{ cat.Id }}</td>
+            <td class="name-cell">
+              <span class="category-indicator"></span>
+              {{ cat.Name }}
+            </td>
+            <td class="description-cell">
+              {{ cat.Description }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <!-- Poruka kada nema kategorija -->
-  <div *ngIf="!loading && !categories.length" class="text-center text-gray-500 mt-6">
-    📭 Trenutno nema dostupnih kategorija.
+  <div *ngIf="!loading && !categories.length" class="empty-state">
+    📭 Trenutno nema definisanih kategorija.
   </div>
 </div>
