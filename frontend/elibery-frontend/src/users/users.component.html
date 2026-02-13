@@ -12,9 +12,13 @@
   <div *ngIf="error" class="error-box">
     {{ error }}
   </div>
+    <app-search 
+    [placeholderText]="'Pretraži ime, prezime, uloga...'" 
+    (searchChange)="handleSearch($event)">
+  </app-search>
 
   <!-- Users Table -->
-  <div *ngIf="!loading && users.length" class="table-container">
+  <div *ngIf="!loading && filteredUsers.length" class="table-container">
     <table>
       <thead>
         <tr>
@@ -29,7 +33,7 @@
 
       <tbody>
         <tr
-          *ngFor="let user of users; let i = index"
+          *ngFor="let user of filteredUsers; let i = index"
           [class.row-even]="i % 2 === 0"
           [class.row-odd]="i % 2 !== 0"
         >
