@@ -259,3 +259,47 @@ textarea { height: 100px; margin-top: 10px; }
 
 .btn-cancel { background: #eee; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
 .btn-save { background: #16a34a; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+/* Kontejner za select da možemo pozicionirati strelicu */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.modern-select {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #ffffff;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #374151;
+  appearance: none; /* Ovo uklanja defaultnu strelicu browsera */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+/* Stil na klik/fokus */
+.modern-select:focus {
+  border-color: #16a34a; /* Tvoja zelena */
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.1);
+  background-color: #fff;
+}
+
+/* Custom strelica */
+.select-arrow {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 10px;
+  color: #9ca3af;
+  pointer-events: none; /* Da klik prolazi na select ispod */
+}
+
+/* Hover efekat */
+.modern-select:hover {
+  border-color: #d1d5db;
+}

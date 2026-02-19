@@ -94,13 +94,17 @@
           <input type="number" [(ngModel)]="currentBook.PublishedYear" name="year">
         </div>
         <div class="input-group">
-          <label>Kategorija</label>
-          <select [(ngModel)]="currentBook.CategoryId" name="cat" required class="form-select">
-            <option *ngFor="let cat of categories" [value]="cat.Id">
-              {{ cat.Name }}
-            </option>
-          </select>
-        </div>
+  <label>Kategorija</label>
+  <div class="select-wrapper">
+    <select [(ngModel)]="currentBook.CategoryId" name="cat" required class="modern-select">
+      <option [ngValue]="null" disabled>Izaberi kategoriju...</option>
+      <option *ngFor="let cat of categories" [value]="cat.Id">
+        {{ cat.Name }}
+      </option>
+    </select>
+    <span class="select-arrow">▼</span>
+  </div>
+</div>
         <div class="input-group">
           <label>URL Slike</label>
           <input type="text" [(ngModel)]="currentBook.ImageUrl" name="img">
