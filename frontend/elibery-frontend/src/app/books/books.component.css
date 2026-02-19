@@ -143,3 +143,119 @@ td {
 /* ANIMATIONS */
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+/* Top Bar Layout */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+
+.search-flex { flex: 1; }
+
+/* Add Button */
+.btn-add {
+  background: linear-gradient(90deg, #16a34a, #22c55e);
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  /* Opciono: ako želiš biti ultra siguran da ide desno */
+  margin-left: auto; 
+      margin-bottom: 5px;
+
+}
+
+.btn-add:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(22, 163, 74, 0.3);
+}
+.btn-add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(22, 163, 74, 0.3);
+  filter: brightness(1.1);
+}
+
+/* Action Buttons in Table */
+.actions-cell {
+  text-align: center;
+  min-width: 100px;
+}
+
+.actions-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 16px;
+}
+
+.btn-icon.edit {
+  background-color: #f0f9ff;
+  color: #0369a1;
+}
+
+.btn-icon.edit:hover {
+  background-color: #e0f2fe;
+  transform: scale(1.1);
+}
+
+.btn-icon.delete {
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.btn-icon.delete:hover {
+  background-color: #fee2e2;
+  transform: scale(1.1);
+}
+/* Modal Overlay */
+
+
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-family: inherit;
+}
+
+textarea { height: 100px; margin-top: 10px; }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-cancel { background: #eee; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }
+.btn-save { background: #16a34a; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; }

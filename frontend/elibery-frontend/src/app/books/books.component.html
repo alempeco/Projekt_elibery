@@ -2,10 +2,17 @@
 
 <div class="page-container">
   
-  <app-search 
-    [placeholderText]="'Pretraži naslov, autora ili opis...'" 
-    (searchChange)="handleSearch($event)">
-  </app-search>
+  <div class="top-bar">
+    <app-search 
+      [placeholderText]="'Pretraži naslov, autora ili opis...'" 
+      (searchChange)="handleSearch($event)"
+      class="search-flex">
+    </app-search>
+    
+    <button class="btn-add" (click)="openModal()">
+      <span class="icon">+</span> Dodaj Knjigu
+    </button>
+  </div>
 
   <div *ngIf="loading" class="loader-wrapper">
     <div class="loader"></div>
@@ -26,32 +33,32 @@
             <th>Kategorija</th>
             <th class="text-center">Slika</th>
             <th>Opis</th>
+            <th class="text-center">Akcije</th> 
           </tr>
         </thead>
         <tbody>
-          <tr
-            *ngFor="let book of filteredBooks; let i = index"
-            [class.row-even]="i % 2 === 0"
-            [class.row-odd]="i % 2 !== 0"
-          >
+          <tr *ngFor="let book of filteredBooks; let i = index" [class.row-even]="i % 2 === 0">
             <td class="id-cell">{{ book.Id }}</td>
             <td class="title-cell">{{ book.Title }}</td>
             <td class="author-cell">{{ book.Author }}</td>
             <td>
-              <span class="category-badge">
-                {{ book.CategoryName }}
-              </span>
+              <span class="category-badge">{{ book.CategoryName || 'Nema' }}</span>
             </td>
             <td class="image-cell">
-              <img
-                *ngIf="book.ImageUrl"
-                [src]="book.ImageUrl"
-                alt="Knjiga"
-                class="book-img-mini"
-              />
+              <img *ngIf="book.ImageUrl" [src]="book.ImageUrl" class="book-img-mini" alt="Cover" />
+              <span *ngIf="!book.ImageUrl">Nema slike</span>
             </td>
-            <td class="description-cell">
-              {{ book.Description }}
+            <td class="description-cell">{{ book.Description }}</td>
+            
+            <td class="actions-cell">
+              <div class="actions-wrapper">
+                <button class="btn-icon edit" (click)="openModal(book)" title="Uredi">
+                  ✏️
+                </button>
+                <button class="btn-icon delete" (click)="deleteBook(book.Id)" title="Obriši">
+                  🗑️
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -62,4 +69,55 @@
   <div *ngIf="!loading && !filteredBooks.length" class="empty-state">
     📭 Nema knjiga koje odgovaraju vašoj pretrazi.
   </div>
-</div>
+
+  <app-shared-modal 
+    [title]="isEditMode ? 'Uredi Knjigu' : 'Dodaj Novu Knjigu'" 
+    [visible]="showModal" 
+    (close)="closeModal()">
+    
+    <form (ngSubmit)="saveBook()">
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Naslov</label>
+          <input type="text" [(ngModel)]="currentBook.Title" name="title" required>
+        </div>
+        <div class="input-group">
+          <label>Autor</label>
+          <input type="text" [(ngModel)]="currentBook.Author" name="author" required>
+        </div>
+        <div class="input-group">
+          <label>ISBN</label>
+          <input type="text" [(ngModel)]="currentBook.ISBN" name="isbn">
+        </div>
+        <div class="input-group">
+          <label>Godina</label>
+          <input type="number" [(ngModel)]="currentBook.PublishedYear" name="year">
+        </div>
+        <div class="input-group">
+          <label>Kategorija</label>
+          <select [(ngModel)]="currentBook.CategoryId" name="cat" required class="form-select">
+            <option *ngFor="let cat of categories" [value]="cat.Id">
+              {{ cat.Name }}
+            </option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>URL Slike</label>
+          <input type="text" [(ngModel)]="currentBook.ImageUrl" name="img">
+        </div>
+      </div>
+
+      <div class="input-group full-width">
+        <label>Opis knjige</label>
+        <textarea [(ngModel)]="currentBook.Description" name="desc"></textarea>
+      </div>
+      
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeModal()">Odustani</button>
+        <button type="submit" class="btn-save">
+          {{ isEditMode ? 'Sačuvaj izmjene' : 'Dodaj knjigu' }}
+        </button>
+      </div>
+    </form>
+  </app-shared-modal>
+  </div>

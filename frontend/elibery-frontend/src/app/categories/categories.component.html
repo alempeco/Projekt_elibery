@@ -5,11 +5,16 @@
     <div class="loader"></div>
   </div>
 
+  <app-search 
+    [placeholderText]="'Pretraži naziv, opis...'" 
+    (searchChange)="handleSearch($event)">
+  </app-search>
+
   <div *ngIf="error" class="error-box">
     {{ error }}
   </div>
 
-  <div *ngIf="!loading && categories.length" class="table-card">
+  <div *ngIf="!loading && filteredCategories.length" class="table-card">
     <div class="table-responsive">
       <table>
         <thead>
@@ -21,7 +26,7 @@
         </thead>
         <tbody>
           <tr
-            *ngFor="let cat of categories; let i = index"
+            *ngFor="let cat of filteredCategories; let i = index"
             [class.row-even]="i % 2 === 0"
             [class.row-odd]="i % 2 !== 0"
           >
@@ -39,7 +44,7 @@
     </div>
   </div>
 
-  <div *ngIf="!loading && !categories.length" class="empty-state">
+  <div *ngIf="!loading && !filteredCategories.length" class="empty-state">
     📭 Trenutno nema definisanih kategorija.
   </div>
 </div>
