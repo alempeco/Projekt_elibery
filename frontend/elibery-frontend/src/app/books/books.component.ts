@@ -5,7 +5,7 @@ import { HeaderComponent } from '../header/header.component';
 import { SearchComponent } from '../search/search.component';
 import { SharedModalComponent } from '../shared/shared-modal/shared-modal.component'; // Provjeri putanju!
 import { FormsModule } from '@angular/forms';
-
+import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
 interface Book {
   Id: number;
   ISBN: string;
@@ -35,7 +35,8 @@ interface Category {
     HeaderComponent, 
     SearchComponent, 
     FormsModule, 
-    SharedModalComponent // Dodano u imports!
+    SharedModalComponent, // Dodano u imports
+    ConfirmDialogComponent
   ]
 })
 export class BooksComponent implements OnInit {
@@ -46,6 +47,8 @@ export class BooksComponent implements OnInit {
   error = '';
   showModal = false;
   isEditMode = false;
+  showConfirm = false;
+  bookIdToDelete: number | null = null;
   
   currentBook: any = {
     Title: '',
@@ -159,13 +162,19 @@ export class BooksComponent implements OnInit {
   }
 
   deleteBook(id: number) {
-    if (confirm('Obrisati knjigu?')) {
-      this.http.delete(`${this.apiUrl}/${id}`).subscribe({
+    this.bookIdToDelete = id;
+    this.showConfirm = true;
+  }
+
+  confirmDeletion() {
+    if (this.bookIdToDelete !== null) {
+      this.http.delete(`${this.apiUrl}/${this.bookIdToDelete}`).subscribe({
         next: () => {
-          this.books = this.books.filter(b => b.Id !== id);
-          this.filteredBooks = this.filteredBooks.filter(b => b.Id !== id);
+          this.books = this.books.filter(b => b.Id !== this.bookIdToDelete);
+          this.filteredBooks = this.filteredBooks.filter(b => b.Id !== this.bookIdToDelete);
+          this.showConfirm = false;
         },
-        error: (err) => alert('Greška pri brisanju.')
+        error: () => alert('Greška pri brisanju.')
       });
     }
   }

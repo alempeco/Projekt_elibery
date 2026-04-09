@@ -1,0 +1,12 @@
+<div class="confirm-overlay" *ngIf="visible">
+  <div class="confirm-card">
+    <div class="confirm-icon">⚠️</div>
+    <h3>{{ title }}</h3>
+    <p>{{ message }}</p>
+    
+    <div class="confirm-actions">
+      <button class="btn-cancel" (click)="onCancel()">Odustani</button>
+      <button class="btn-confirm" (click)="onConfirm()">Potvrdi</button>
+    </div>
+  </div>
+</div>

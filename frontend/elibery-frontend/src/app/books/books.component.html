@@ -1,7 +1,7 @@
 <app-header [title]="'Knjige'"></app-header>
 
 <div class="page-container">
-  
+
   <div class="top-bar">
     <app-search 
       [placeholderText]="'Pretraži naslov, autora ili opis...'" 
@@ -94,17 +94,17 @@
           <input type="number" [(ngModel)]="currentBook.PublishedYear" name="year">
         </div>
         <div class="input-group">
-  <label>Kategorija</label>
-  <div class="select-wrapper">
-    <select [(ngModel)]="currentBook.CategoryId" name="cat" required class="modern-select">
-      <option [ngValue]="null" disabled>Izaberi kategoriju...</option>
-      <option *ngFor="let cat of categories" [value]="cat.Id">
-        {{ cat.Name }}
-      </option>
-    </select>
-    <span class="select-arrow">▼</span>
-  </div>
-</div>
+          <label>Kategorija</label>
+          <div class="select-wrapper">
+            <select [(ngModel)]="currentBook.CategoryId" name="cat" required class="modern-select">
+              <option [ngValue]="null" disabled>Izaberi kategoriju...</option>
+              <option *ngFor="let cat of categories" [value]="cat.Id">
+                {{ cat.Name }}
+              </option>
+            </select>
+            <span class="select-arrow">▼</span>
+          </div>
+        </div>
         <div class="input-group">
           <label>URL Slike</label>
           <input type="text" [(ngModel)]="currentBook.ImageUrl" name="img">
@@ -124,4 +124,13 @@
       </div>
     </form>
   </app-shared-modal>
-  </div>
+
+  <app-confirm-dialog 
+    [visible]="showConfirm"
+    title="Brisanje knjige"
+    message="Da li ste sigurni da želite trajno obrisati ovu knjigu?"
+    (confirmed)="confirmDeletion()"
+    (canceled)="showConfirm = false">
+  </app-confirm-dialog>
+
+</div>

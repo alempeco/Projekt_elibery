@@ -1,9 +1,19 @@
-<div class="header-container">
-  <button class="back-button" (click)="goBack()">
-    <span class="arrow">←</span>
-  </button>
-  
-  <div class="title-wrapper">
-    <span class="title-text">{{ title | uppercase }}</span>
+<header class="main-header">
+  <div class="header-content">
+    
+    <div class="left-section">
+      <button class="back-btn" (click)="goBack()" title="Nazad">
+        <span class="arrow-icon">←</span>
+      </button>
+    </div>
+
+    <div class="center-section">
+      <h1 class="header-title">{{ title }}</h1>
+      <div class="title-underline"></div>
+    </div>
+
+    <div class="right-section">
+      </div>
+
   </div>
-</div>
+</header>
