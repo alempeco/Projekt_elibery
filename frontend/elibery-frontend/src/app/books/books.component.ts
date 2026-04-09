@@ -3,9 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from '../header/header.component';
 import { SearchComponent } from '../search/search.component';
-import { SharedModalComponent } from '../shared/shared-modal/shared-modal.component'; // Provjeri putanju!
+import { SharedModalComponent } from '../shared/shared-modal/shared-modal.component';
 import { FormsModule } from '@angular/forms';
 import { ConfirmDialogComponent } from '../shared/confirm-dialog/confirm-dialog.component';
+
 interface Book {
   Id: number;
   ISBN: string;
@@ -35,7 +36,7 @@ interface Category {
     HeaderComponent, 
     SearchComponent, 
     FormsModule, 
-    SharedModalComponent, // Dodano u imports
+    SharedModalComponent, 
     ConfirmDialogComponent
   ]
 })
@@ -50,26 +51,51 @@ export class BooksComponent implements OnInit {
   showConfirm = false;
   bookIdToDelete: number | null = null;
   
-  currentBook: any = {
-    Title: '',
-    Author: '',
-    ISBN: '',
-    PublishedYear: new Date().getFullYear(),
-    TotalCopies: 1,
-    AvailableCopies: 1,
-    CategoryId: null,
-    ImageUrl: '',
-    Description: ''
-  };
+  currentUser: any = null;
+
+  // FIX: Inicijalizacija objekta odmah
+  currentBook: any = this.resetBookObject();
 
   private apiUrl = 'http://localhost:3000/api/books';
   private categoryUrl = 'http://localhost:3000/api/categories';
+  private loansUrl = 'http://localhost:3000/api/loans';
+  private reservationsUrl = 'http://localhost:3000/api/reservations';
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    this.getCurrentUser();
     this.loadBooks();
     this.loadCategories();
+  }
+
+  getCurrentUser() {
+    const data = localStorage.getItem('user');
+    this.currentUser = data ? JSON.parse(data) : null;
+    console.log("Trenutni korisnik:", this.currentUser);
+  }
+
+  get isAdmin(): boolean {
+    const role = this.currentUser?.Role?.toLowerCase();
+    return role === 'admin' || role === 'teacher'; 
+  }
+
+  get isStudent(): boolean {
+    return this.currentUser?.Role?.toLowerCase() === 'student';
+  }
+
+  resetBookObject() {
+    return {
+      Title: '',
+      Author: '',
+      ISBN: '',
+      PublishedYear: new Date().getFullYear(),
+      TotalCopies: 1,      // Podrazumijevana vrijednost
+      AvailableCopies: 1,  // Podrazumijevana vrijednost
+      CategoryId: null,
+      ImageUrl: '',
+      Description: ''
+    };
   }
 
   loadBooks(): void {
@@ -80,7 +106,7 @@ export class BooksComponent implements OnInit {
         this.filteredBooks = data;
         this.loading = false;
       },
-      error: (err) => {
+      error: () => {
         this.error = 'Greška pri učitavanju knjiga.';
         this.loading = false;
       }
@@ -91,19 +117,41 @@ export class BooksComponent implements OnInit {
     this.http.get<Category[]>(this.categoryUrl).subscribe({
       next: (data) => {
         this.categories = data;
-        if (!this.currentBook.CategoryId && data.length > 0) {
+        if (data.length > 0 && !this.currentBook.CategoryId) {
           this.currentBook.CategoryId = data[0].Id;
         }
-      },
-      error: (err) => console.error('Greška pri učitavanju kategorija:', err)
+      }
     });
   }
 
-  handleSearch(text: string) {
-    if (!text) {
-      this.filteredBooks = this.books;
+  borrowBook(book: Book) {
+    if (book.AvailableCopies < 1) {
+      alert('Nema dostupnih primjeraka!');
       return;
     }
+    const loanData = {
+    UserId: this.currentUser.Id,
+    BookId: book.Id,
+    LoanDate: new Date().toISOString().split('T')[0],
+    DueDate: null, // Rok još ne teče jer knjiga nije preuzeta
+    Status: 'Requested' 
+  };
+    this.http.post(this.loansUrl, loanData).subscribe({
+      next: () => {
+        alert('Uspješno posuđeno!');
+        this.loadBooks();
+      },
+      error: (err) => alert("Greška: " + err.error?.message)
+    });
+  }
+
+  calculateDueDate(days: number): string {
+    const date = new Date();
+    date.setDate(date.getDate() + days);
+    return date.toISOString().split('T')[0];
+  }
+
+  handleSearch(text: string) {
     const search = text.toLowerCase();
     this.filteredBooks = this.books.filter(book => 
       book.Title.toLowerCase().includes(search) || 
@@ -115,48 +163,40 @@ export class BooksComponent implements OnInit {
   openModal(book: any = null) {
     if (book) {
       this.isEditMode = true;
-      this.currentBook = { ...book };
+      // Deep copy da izmjene u modalu ne utiču na tabelu dok se ne spasi
+      this.currentBook = JSON.parse(JSON.stringify(book));
     } else {
       this.isEditMode = false;
-      this.currentBook = { 
-        Title: '', 
-        Author: '', 
-        ISBN: '', 
-        PublishedYear: new Date().getFullYear(), 
-        TotalCopies: 1, 
-        AvailableCopies: 1, 
-        CategoryId: this.categories.length > 0 ? this.categories[0].Id : null, 
-        ImageUrl: '', 
-        Description: '' 
-      };
+      this.currentBook = this.resetBookObject();
+      if (this.categories.length > 0) {
+        this.currentBook.CategoryId = this.categories[0].Id;
+      }
     }
     this.showModal = true;
   }
 
-  closeModal() {
-    this.showModal = false;
+  closeModal() { 
+    this.showModal = false; 
+    this.currentBook = this.resetBookObject();
   }
 
   saveBook() {
+    // Priprema podataka - vadimo Id i CategoryName jer ih SQL obično ne prima u POST/PUT body-u
     const { CategoryName, Id, ...bookData } = this.currentBook;
+    
+    // Osiguravamo da su brojevi zaista brojevi (u slučaju da ih input vrati kao string)
+    bookData.TotalCopies = Number(bookData.TotalCopies);
+    bookData.AvailableCopies = Number(bookData.AvailableCopies);
 
     if (this.isEditMode) {
       this.http.put(`${this.apiUrl}/${Id}`, bookData).subscribe({
-        next: () => {
-          this.loadBooks();
-          this.closeModal();
-          alert('Izmjene spašene!');
-        },
-        error: (err) => alert("Greška: " + err.message)
+        next: () => { this.loadBooks(); this.closeModal(); },
+        error: (err) => alert("Greška pri izmjeni: " + err.message)
       });
     } else {
       this.http.post(this.apiUrl, bookData).subscribe({
-        next: () => {
-          this.loadBooks();
-          this.closeModal();
-          alert('Knjiga dodana!');
-        },
-        error: (err) => alert("Greška: " + (err.error?.details || err.message))
+        next: () => { this.loadBooks(); this.closeModal(); },
+        error: (err) => alert("Greška pri dodavanju: " + err.message)
       });
     }
   }
@@ -170,12 +210,32 @@ export class BooksComponent implements OnInit {
     if (this.bookIdToDelete !== null) {
       this.http.delete(`${this.apiUrl}/${this.bookIdToDelete}`).subscribe({
         next: () => {
-          this.books = this.books.filter(b => b.Id !== this.bookIdToDelete);
-          this.filteredBooks = this.filteredBooks.filter(b => b.Id !== this.bookIdToDelete);
+          this.loadBooks();
           this.showConfirm = false;
+          this.bookIdToDelete = null;
         },
-        error: () => alert('Greška pri brisanju.')
+        error: () => alert("Greška pri brisanju.")
       });
     }
   }
+  // Nova metoda za kreiranje rezervacije
+reserveBook(book: Book) {
+  const reservationData = {
+    UserId: this.currentUser.Id,
+    BookId: book.Id,
+    ReservationDate: new Date().toISOString().slice(0, 19).replace('T', ' '), // Format za MySQL DATETIME
+    Status: 'Pending' // Početni status iz vašeg ENUM-a
+  };
+
+  this.http.post(this.reservationsUrl, reservationData).subscribe({
+    next: () => {
+      alert(`Knjiga "${book.Title}" je uspješno rezervisana. Bićete obaviješteni kada bude dostupna.`);
+      this.loadBooks(); // Osvježavamo listu
+    },
+    error: (err) => {
+      console.error(err);
+      alert("Greška prilikom rezervacije: " + (err.error?.message || "Server nije dostupan"));
+    }
+  });
+}
 }

@@ -1,63 +1,62 @@
-<app-header [title]="'Knjige'"></app-header>
+<app-header [title]="'Upravljanje Knjigama'"></app-header>
 
 <div class="page-container">
-
   <div class="top-bar">
     <app-search 
-      [placeholderText]="'Pretraži naslov, autora ili opis...'" 
+      [placeholderText]="'Pretraži naslov ili autora...'" 
       (searchChange)="handleSearch($event)"
       class="search-flex">
     </app-search>
     
-    <button class="btn-add" (click)="openModal()">
+    <button *ngIf="isAdmin" class="btn-add" (click)="openModal()">
       <span class="icon">+</span> Dodaj Knjigu
     </button>
   </div>
 
-  <div *ngIf="loading" class="loader-wrapper">
-    <div class="loader"></div>
-  </div>
-
-  <div *ngIf="error" class="error-box">
-    {{ error }}
-  </div>
+  <div *ngIf="loading" class="loader-wrapper"><div class="loader"></div></div>
 
   <div *ngIf="!loading && filteredBooks.length" class="table-card">
     <div class="table-responsive">
       <table>
         <thead>
           <tr>
-            <th>ID</th>
             <th>Naslov</th>
             <th>Autor</th>
             <th>Kategorija</th>
             <th class="text-center">Slika</th>
             <th>Opis</th>
+            <th>Stanje</th>
             <th class="text-center">Akcije</th> 
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let book of filteredBooks; let i = index" [class.row-even]="i % 2 === 0">
-            <td class="id-cell">{{ book.Id }}</td>
             <td class="title-cell">{{ book.Title }}</td>
             <td class="author-cell">{{ book.Author }}</td>
-            <td>
-              <span class="category-badge">{{ book.CategoryName || 'Nema' }}</span>
-            </td>
+            <td><span class="category-badge">{{ book.CategoryName || 'Nema' }}</span></td>
             <td class="image-cell">
               <img *ngIf="book.ImageUrl" [src]="book.ImageUrl" class="book-img-mini" alt="Cover" />
-              <span *ngIf="!book.ImageUrl">Nema slike</span>
             </td>
             <td class="description-cell">{{ book.Description }}</td>
-            
+            <td>{{ book.AvailableCopies }}</td>
+
             <td class="actions-cell">
               <div class="actions-wrapper">
-                <button class="btn-icon edit" (click)="openModal(book)" title="Uredi">
-                  ✏️
+                
+                <button *ngIf="isStudent" class="btn-borrow" (click)="borrowBook(book)" [disabled]="book.AvailableCopies < 1">
+                  📖 Posudi
                 </button>
-                <button class="btn-icon delete" (click)="deleteBook(book.Id)" title="Obriši">
-                  🗑️
-                </button>
+                <button *ngIf="isStudent && book.AvailableCopies < 1" 
+          class="btn-reserve" 
+          (click)="reserveBook(book)">
+    ⏳ Rezerviši
+  </button>
+
+                <ng-container *ngIf="isAdmin">
+                  <button class="btn-icon edit" (click)="openModal(book)" title="Uredi">✏️</button>
+                  <button class="btn-icon delete" (click)="deleteBook(book.Id)" title="Obriši">🗑️</button>
+                </ng-container>
+
               </div>
             </td>
           </tr>
@@ -66,16 +65,12 @@
     </div>
   </div>
 
-  <div *ngIf="!loading && !filteredBooks.length" class="empty-state">
-    📭 Nema knjiga koje odgovaraju vašoj pretrazi.
-  </div>
-
-  <app-shared-modal 
+ <app-shared-modal 
     [title]="isEditMode ? 'Uredi Knjigu' : 'Dodaj Novu Knjigu'" 
     [visible]="showModal" 
     (close)="closeModal()">
     
-    <form (ngSubmit)="saveBook()">
+    <form (ngSubmit)="saveBook()" #bookForm="ngForm">
       <div class="form-grid">
         <div class="input-group">
           <label>Naslov</label>
@@ -93,32 +88,37 @@
           <label>Godina</label>
           <input type="number" [(ngModel)]="currentBook.PublishedYear" name="year">
         </div>
+
+        <div class="input-group">
+          <label>Ukupno kopija</label>
+          <input type="number" [(ngModel)]="currentBook.TotalCopies" name="total" required min="1">
+        </div>
+        <div class="input-group">
+          <label>Dostupno kopija</label>
+          <input type="number" [(ngModel)]="currentBook.AvailableCopies" name="available" required min="0">
+        </div>
+
         <div class="input-group">
           <label>Kategorija</label>
-          <div class="select-wrapper">
-            <select [(ngModel)]="currentBook.CategoryId" name="cat" required class="modern-select">
-              <option [ngValue]="null" disabled>Izaberi kategoriju...</option>
-              <option *ngFor="let cat of categories" [value]="cat.Id">
-                {{ cat.Name }}
-              </option>
-            </select>
-            <span class="select-arrow">▼</span>
-          </div>
+          <select [(ngModel)]="currentBook.CategoryId" name="cat" required class="modern-select">
+            <option [ngValue]="null" disabled>Izaberi kategoriju...</option>
+            <option *ngFor="let cat of categories" [value]="cat.Id">{{ cat.Name }}</option>
+          </select>
         </div>
         <div class="input-group">
           <label>URL Slike</label>
           <input type="text" [(ngModel)]="currentBook.ImageUrl" name="img">
         </div>
       </div>
-
-      <div class="input-group full-width">
+      
+      <div style="margin-top: 15px;">
         <label>Opis knjige</label>
-        <textarea [(ngModel)]="currentBook.Description" name="desc"></textarea>
+        <textarea [(ngModel)]="currentBook.Description" name="desc" placeholder="Unesite kratak sadržaj..."></textarea>
       </div>
       
       <div class="modal-actions">
         <button type="button" class="btn-cancel" (click)="closeModal()">Odustani</button>
-        <button type="submit" class="btn-save">
+        <button type="submit" class="btn-save" [disabled]="!bookForm.valid">
           {{ isEditMode ? 'Sačuvaj izmjene' : 'Dodaj knjigu' }}
         </button>
       </div>
@@ -127,10 +127,11 @@
 
   <app-confirm-dialog 
     [visible]="showConfirm"
-    title="Brisanje knjige"
-    message="Da li ste sigurni da želite trajno obrisati ovu knjigu?"
     (confirmed)="confirmDeletion()"
     (canceled)="showConfirm = false">
   </app-confirm-dialog>
 
+  <div *ngIf="!loading && !filteredBooks.length" class="empty-state">
+    📭 Nema knjiga koje odgovaraju vašoj pretrazi.
+  </div>
 </div>

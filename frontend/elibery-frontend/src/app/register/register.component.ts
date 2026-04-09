@@ -34,7 +34,7 @@ export class RegisterComponent {
       email: this.email,
       password: this.password,
       role: this.role,
-      class: this.userClass
+      Class: this.userClass
     };
 
     this.http.post('http://localhost:3000/api/register', body).subscribe({

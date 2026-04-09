@@ -1,0 +1,55 @@
+<app-header [title]="'Rezervacije Knjiga'"></app-header>
+
+<div class="page-container">
+  <div class="top-bar">
+    <app-search 
+      [placeholderText]="isAdmin ? 'Pretraži knjigu ili studenta...' : 'Pretraži svoje rezervacije...'" 
+      (searchChange)="handleSearch($event)"
+      class="search-flex">
+    </app-search>
+  </div>
+
+  <div *ngIf="loading" class="loader-wrapper"><div class="loader"></div></div>
+
+  <div *ngIf="!loading && filteredReservations.length" class="table-card">
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Knjiga</th>
+            <th *ngIf="isAdmin">Student</th>
+            <th>Datum Rezervacije</th>
+            <th>Status</th>
+            <th class="text-center">Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let res of filteredReservations; let i = index" [class.row-even]="i % 2 === 0">
+            <td class="title-cell">{{ res.BookTitle }}</td>
+            <td *ngIf="isAdmin">{{ res.FirstName }} {{ res.LastName }}</td>
+            <td>{{ res.ReservationDate | date:'dd.MM.yyyy HH:mm' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="res.Status.toLowerCase()">
+                {{ res.Status }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <div class="actions-wrapper">
+                <ng-container *ngIf="isAdmin && res.Status === 'Pending'">
+                  <button class="btn-action approve" (click)="updateStatus(res.Id, 'Approved')" title="Odobri">✅</button>
+                  <button class="btn-action cancel" (click)="updateStatus(res.Id, 'Cancelled')" title="Otkaži">❌</button>
+                </ng-container>
+
+                <button class="btn-action delete" (click)="deleteReservation(res.Id)" title="Obriši">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !filteredReservations.length" class="empty-state">
+    ⏳ Nema rezultata koji odgovaraju pretrazi.
+  </div>
+</div>

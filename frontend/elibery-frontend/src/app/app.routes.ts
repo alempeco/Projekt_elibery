@@ -6,6 +6,8 @@ import { RegisterComponent } from './register/register.component';
 import { CategoriesComponent } from './categories/categories.component';
 import { BooksComponent } from './books/books.component';
 import { UsersComponent } from '../users/users.component';
+import { LoansComponent } from './loans/loans.component';
+import { ReservationsComponent } from './reservations/reservations.component';
 
 export const routes: Routes = [
 
@@ -20,6 +22,10 @@ export const routes: Routes = [
       { path: 'books', component: BooksComponent },
       { path: 'categories', component: CategoriesComponent },
       { path: 'users', component: UsersComponent },
+      { path: 'loans', component: LoansComponent },
+      { path: 'reservations', component: ReservationsComponent },
+
+
       { path: '', redirectTo: 'books', pathMatch: 'full' }
     ]
   },

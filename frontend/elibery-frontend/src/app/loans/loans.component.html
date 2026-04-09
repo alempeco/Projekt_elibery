@@ -1,0 +1,137 @@
+<app-header [title]="isAdmin ? 'Administracija Posudbi' : 'Moje Posudbe'"></app-header>
+
+<div class="page-container">
+  <div class="top-bar">
+    <app-search 
+      (searchChange)="handleSearch($event)" 
+      [placeholderText]="'Pretraži po knjizi ili korisniku...'"
+      class="search-flex">
+    </app-search>
+    
+    <button *ngIf="isAdmin" class="btn-add" (click)="openModal()">
+      <span class="icon">📖</span> Nova Posudba
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loader-wrapper">
+    <div class="loader"></div>
+  </div>
+
+  <div *ngIf="!loading && filteredLoans.length" class="table-card">
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th *ngIf="isAdmin">Korisnik</th>
+            <th>Knjiga</th>
+            <th>Datum Posudbe</th>
+            <th>Rok za povrat</th>
+            <th>Status</th>
+            <th class="text-center">Akcije</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let loan of filteredLoans; let i = index" [class.row-even]="i % 2 === 0">
+            <td *ngIf="isAdmin">
+              <div class="user-info">
+                <strong>{{ getUserName(loan.UserId) }}</strong>
+                <small>ID: #{{ loan.UserId }}</small>
+              </div>
+            </td>
+            
+            <td class="book-cell">{{ getBookTitle(loan.BookId) }}</td>
+            <td>{{ loan.LoanDate | date:'dd.MM.yyyy' }}</td>
+            <td>{{ loan.Status === 'Requested' ? '---' : (loan.DueDate | date:'dd.MM.yyyy') }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="loan.Status.toLowerCase()">
+                {{ loan.Status === 'Requested' ? 'Na čekanju' : loan.Status }}
+              </span>
+            </td>
+            
+            <td class="actions-cell">
+              <button *ngIf="loan.Status === 'Requested' && isAdmin" class="btn-confirm" (click)="confirmPickup(loan)">
+                🤝 Potvrdi preuzimanje
+              </button>
+
+              <button *ngIf="loan.Status === 'Active' && isAdmin" class="btn-return" (click)='returnBook(loan)'>
+                Vrati knjigu
+              </button>
+              
+              <span *ngIf="loan.Status === 'Returned'" class="text-muted">
+                <i class="fa-solid fa-check-double"></i> Vraćeno
+              </span>
+              
+              <span *ngIf="loan.Status === 'Requested' && !isAdmin" class="text-pending">
+                Rezervisano
+              </span>
+
+              <span *ngIf="loan.Status === 'Active' && !isAdmin" class="text-active-info">
+                U posjedu
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && !filteredLoans.length" class="empty-state">
+    <i class="fa-solid fa-box-open"></i>
+    <p>Trenutno nema evidentiranih posudbi.</p>
+  </div>
+
+  <app-shared-modal *ngIf="isAdmin" title="Evidentiraj Novu Posudbu" [visible]="showModal" (close)="showModal = false">
+    <form (ngSubmit)="saveLoan()">
+      <div class="form-grid">
+        <div class="input-group">
+          <label>Učenik / Korisnik</label>
+          <div class="select-wrapper">
+            <select [(ngModel)]="currentLoan.UserId" name="u" required class="modern-select">
+              <option [ngValue]="null" disabled>Izaberi korisnika...</option>
+              <option *ngFor="let u of users" [value]="u.Id">
+                {{u.FirstName}} {{u.LastName}} ({{u.Email}})
+              </option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="input-group">
+          <label>Knjiga za posudbu</label>
+          <div class="select-wrapper">
+            <select [(ngModel)]="currentLoan.BookId" name="b" required class="modern-select">
+              <option [ngValue]="null" disabled>Izaberi knjigu...</option>
+              <option *ngFor="let b of books" [value]="b.Id" [disabled]="b.AvailableCopies < 1">
+                {{b.Title}} (Dostupno: {{b.AvailableCopies}})
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Status posudbe</label>
+          <div class="select-wrapper">
+            <select [(ngModel)]="currentLoan.Status" name="st" class="modern-select">
+              <option value="Requested">Zahtjev (učenik tek treba doći)</option>
+              <option value="Active">Aktivno (knjiga se odmah izdaje)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Datum posudbe</label>
+          <input type="date" [(ngModel)]="currentLoan.LoanDate" name="ld" class="modern-input">
+        </div>
+        
+        <div class="input-group">
+          <label>Rok za povrat (default 14 dana)</label>
+          <input type="date" [(ngModel)]="currentLoan.DueDate" name="dd" class="modern-input">
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="showModal = false">Odustani</button>
+        <button type="submit" class="btn-save">Potvrdi Posudbu</button>
+      </div>
+    </form>
+  </app-shared-modal>
+</div>
