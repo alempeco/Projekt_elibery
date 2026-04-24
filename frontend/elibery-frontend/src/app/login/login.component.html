@@ -1,15 +1,53 @@
-<div class="login-container">
-  <h2>Prijava</h2>
-  <form (ngSubmit)="onLogin()">
-    <div>
-      <label>Email:</label>
-      <input type="email" [(ngModel)]="email" name="email" required />
+<div class="login-wrapper">
+  <div class="brand-side">
+    <div class="logo-container">
+<img src="https://i.postimg.cc/wMBNRZy1/logo.webp" 
+         alt="MSS Travnik Logo" 
+         class="school-logo"><div class="brand-text">
+        <h3>Mješovita srednja tehnička škola</h3>
+        <p>Travnik</p>
+      </div>
     </div>
-    <div>
-      <label>Lozinka:</label>
-      <input type="password" [(ngModel)]="password" name="password" required />
+  </div>
+
+  <div class="form-side">
+    <div class="login-card">
+      <div class="card-header">
+        <h1 class="app-name">eLibery</h1>
+        <p class="subtitle">Dobrodošli nazad. Prijavite se na sistem.</p>
+      </div>
+
+      <form (ngSubmit)="onLogin()">
+        <div class="input-group">
+          <label>Email adresa</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" [(ngModel)]="email" name="email" placeholder="npr. profesor@elibery.ba" required />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label>Lozinka</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" [(ngModel)]="password" name="password" placeholder="••••••••" required />
+          </div>
+        </div>
+
+        <div *ngIf="errorMessage" class="error-box">
+          <i class="fa-solid fa-circle-exclamation"></i>
+          {{ errorMessage }}
+        </div>
+
+        <button type="submit" class="btn-login">
+          <span>Prijavi se</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <div class="card-footer">
+        <p>&copy; 2026 MSS Travnik - Informatika</p>
+      </div>
     </div>
-    <div *ngIf="errorMessage" style="color:red">{{ errorMessage }}</div>
-    <button type="submit">Prijavi se</button>
-  </form>
+  </div>
 </div>
